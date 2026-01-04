@@ -1,0 +1,47 @@
+services:
+  influxdb:
+    image: influxdb:2.7
+    container_name: influxdb
+    ports:
+      - "8086:8086"
+    volumes:
+      - ./influxdb-data:/var/lib/influxdb2
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=change_me_now
+      - DOCKER_INFLUXDB_INIT_ORG=windorg
+      - DOCKER_INFLUXDB_INIT_BUCKET=wind
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=change_me_token
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:11.1.0
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana-data:/var/lib/grafana
+    restart: unless-stopped
+    depends_on:
+      - influxdb
+
+  receiver:
+    image: python:3.11-slim
+    container_name: receiver
+    working_dir: /app
+    volumes:
+      - ./receiver:/app
+    command: bash -lc "pip install -r requirements.txt && python app.py"
+    environment:
+      - INFLUX_URL=http://influxdb:8086
+      - INFLUX_TOKEN=change_me_token
+      - INFLUX_ORG=windorg
+      - INFLUX_BUCKET=wind
+      - UDP_PORT=1700
+    ports:
+      - "1700:1700/udp"
+      - "8000:8000"
+    restart: unless-stopped
+    depends_on:
+      - influxdb

@@ -1,0 +1,48 @@
+{
+  "title": "Wind Station",
+  "timezone": "browser",
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Wind Avg (1m) [kn]",
+      "targets": [
+        {
+          "refId": "A",
+          "query": "from(bucket: \\\"wind\\\")\\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\\n  |> filter(fn: (r) => r._measurement == \\\"wind_station\\\" and r._field == \\\"wind_avg_1m\\\" and r.node_id == \\\"1\\\")\\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Gust (1m) [kn]",
+      "targets": [
+        {
+          "refId": "B",
+          "query": "from(bucket: \\\"wind\\\")\\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\\n  |> filter(fn: (r) => r._measurement == \\\"wind_station\\\" and r._field == \\\"gust_1m\\\" and r.node_id == \\\"1\\\")\\n  |> aggregateWindow(every: 1m, fn: max, createEmpty: false)"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Wind Direction [deg]",
+      "targets": [
+        {
+          "refId": "C",
+          "query": "from(bucket: \\\"wind\\\")\\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\\n  |> filter(fn: (r) => r._measurement == \\\"wind_station\\\" and r._field == \\\"dir_avg_1m\\\" and r.node_id == \\\"1\\\")\\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Battery [mV]",
+      "targets": [
+        {
+          "refId": "D",
+          "query": "from(bucket: \\\"wind\\\")\\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\\n  |> filter(fn: (r) => r._measurement == \\\"wind_station\\\" and r._field == \\\"battery_mv\\\" and r.node_id == \\\"1\\\")\\n  |> aggregateWindow(every: 5m, fn: mean, createEmpty: false)"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 39,
+  "version": 1
+}

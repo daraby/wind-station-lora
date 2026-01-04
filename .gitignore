@@ -1,0 +1,7 @@
+.env
+gateway/docker/influxdb-data/
+gateway/docker/grafana-data/
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
